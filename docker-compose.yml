@@ -1,0 +1,39 @@
+version: '3'
+services:
+  php01:
+    image: php:7-fpm
+    volumes: 
+      - site01:/var/www/html
+  web01:
+    build: 
+      context: web/.
+      args:
+        PHP_HOST: php01
+    depends_on:
+      - php01
+    volumes:
+      - site01:/var/www/html
+  php02:
+    image: php:7-fpm
+    volumes: 
+      - site02:/var/www/html
+  web02:
+    build: 
+      context: web/.
+      args:
+        PHP_HOST: php02
+    depends_on:
+      - php02
+    volumes: 
+      - site02:/var/www/html
+  loadbalancer:
+    build: loadbalancer/.
+    ports:
+      - "80:80"
+    depends_on:
+      - web01
+      - web02
+  
+volumes:
+  site01:
+  site02:
